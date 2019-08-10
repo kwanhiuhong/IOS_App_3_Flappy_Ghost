@@ -21,6 +21,9 @@ class GameViewController: UIViewController {
                 // Set the scale mode to scale to fit the window
                 scene.scaleMode = .aspectFill
                 
+                //this is to make the background more natural, setting it to the size of iphone screen
+                //scene.size = self.view.bounds.size
+                
                 // Present the scene
                 view.presentScene(scene)
             }

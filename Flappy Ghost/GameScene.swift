@@ -19,7 +19,6 @@ struct physicsCategory {
 
 class GameScene: SKScene, SKPhysicsContactDelegate {
 
-    
     var ground = SKSpriteNode()
     var ghost = SKSpriteNode()
     var wallPair = SKNode()
@@ -44,12 +43,23 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         //this is to handle or delegate any physics contact that goes on
         self.physicsWorld.contactDelegate = self
         
-        scoreLbl.position = CGPoint(x: self.frame.midX, y: self.frame.midY + 500)
+        //create background for the app
+        for i in 0..<2 {
+            let background = SKSpriteNode(imageNamed: "Background")
+            //background.anchorPoint = CGPoint(x: 0, y: 0)
+            background.position = CGPoint(x: CGFloat(i) * self.frame.width, y: 0)
+            background.name = "background"
+            //background.size = (self.view?.bounds.size)!
+            self.addChild(background)
+        }
+        
+        scoreLbl.position = CGPoint(x: self.frame.midX, y: self.frame.maxY - 300)
         print ("the x coordinate is : \(scoreLbl.frame.midX), y is \(scoreLbl.frame.midY)")
         scoreLbl.text = "\(score)"
+        scoreLbl.fontName = "04b_19"
         scoreLbl.zPosition = 4
         scoreLbl.fontColor = SKColor.white
-        scoreLbl.fontSize = 300
+        scoreLbl.fontSize = 200
         self.addChild(scoreLbl)
         
         //add the ground
@@ -71,7 +81,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         //add the physics to ghost
         //as the ghost has a round head, we don't want it hitting things that are not there, so use circle instead of rectangle
-        createPhysicsBodyWithCircle(ghost, physicsCategory.ghost, physicsCategory.ground | physicsCategory.wall, physicsCategory.ground | physicsCategory.wall | physicsCategory.score, false, true)
+        createPhysicsBodyWithCircle(ghost, physicsCategory.ghost, physicsCategory.ground
+            | physicsCategory.wall, physicsCategory.ground | physicsCategory.wall | physicsCategory.score, false, true)
         ghost.zPosition = 2
         
         self.addChild(ghost)
@@ -82,10 +93,14 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     
     func createBtn(){
-        restartBtn = SKSpriteNode(color: SKColor.blue, size: CGSize(width: 200, height: 100))
+        restartBtn = SKSpriteNode(imageNamed: "RestartBtn")
+        restartBtn.size = CGSize(width: self.frame.width / 3.0, height: self.frame.height / 10.0)
         restartBtn.position = CGPoint(x: self.frame.midX, y: self.frame.midY)
         restartBtn.zPosition = 5
+        restartBtn.setScale(0)
         self.addChild(restartBtn)
+        
+        restartBtn.run(SKAction.scale(to: 1.0, duration: 0.3))
     }
     
     //what stores inside this contact is what elements have collided with each other
@@ -93,15 +108,47 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         let firstBody = contact.bodyA
         let secondBody = contact.bodyB
         
-        if firstBody.categoryBitMask == physicsCategory.score && secondBody.categoryBitMask == physicsCategory.ghost || firstBody.categoryBitMask == physicsCategory.ghost && secondBody.categoryBitMask == physicsCategory.score {
+        //if the ghost hits the hidden score line, then we increase the score
+        if firstBody.categoryBitMask == physicsCategory.score && secondBody.categoryBitMask == physicsCategory.ghost {
             score += 1
             scoreLbl.text = "\(score)"
-            print ("the score is \(score)")
+            firstBody.node?.removeFromParent()
+        } else if firstBody.categoryBitMask == physicsCategory.ghost && secondBody.categoryBitMask == physicsCategory.score {
+            score += 1
+            scoreLbl.text = "\(score)"
+            secondBody.node?.removeFromParent()
         }
         
-        if firstBody.categoryBitMask == physicsCategory.ghost && secondBody.categoryBitMask == physicsCategory.wall || firstBody.categoryBitMask == physicsCategory.wall && secondBody.categoryBitMask == physicsCategory.ghost {
-            died = true
-            createBtn()
+        //if the ghost hits the wall, it will die
+        if firstBody.categoryBitMask == physicsCategory.ghost && secondBody.categoryBitMask == physicsCategory.wall
+            || firstBody.categoryBitMask == physicsCategory.wall && secondBody.categoryBitMask == physicsCategory.ghost {
+
+            //this will freeze everything moving after the ghost hits the wall, including the restartBtn
+            //self.scene?.speed = 0
+            enumerateChildNodes(withName: "wallPair", using: ({
+                //the node here will be all the wall pair nodes that we pick up in the scene
+                (node, error) in
+                node.speed = 0
+                self.removeAllActions()
+            }))
+            if died == false {
+                died = true
+                createBtn()
+            }
+        }
+        
+        //if the ghost hits the wall, it will die
+        if firstBody.categoryBitMask == physicsCategory.ghost && secondBody.categoryBitMask == physicsCategory.ground
+            || firstBody.categoryBitMask == physicsCategory.ground && secondBody.categoryBitMask == physicsCategory.ghost {
+            enumerateChildNodes(withName: "wallPair", using: ({
+                (node, error) in
+                node.speed = 0
+                self.removeAllActions()
+            }))
+            if died == false {
+                died = true
+                createBtn()
+            }
         }
     }
     
@@ -113,9 +160,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             
             let spawn = SKAction.run({
                 () in
-                
                 self.createWalls()
-              
             })
             
             //delay is the time interval between your first wall and second, second and third...
@@ -128,7 +173,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             self.run(spawnDelayForever)
             
             let distance = CGFloat(self.frame.width + wallPairWidth + 100)
-            print ("the distance is \(distance)")
             let movePipes = SKAction.moveBy(x: -distance, y: 0, duration: TimeInterval(0.003 * distance))
             let removePipes = SKAction.removeFromParent()
             self.moveAndRemove = SKAction.sequence([movePipes, removePipes])
@@ -159,24 +203,21 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     func createWalls(){
         
         //this part shows score that you get at the end of the game
-        let scoreNode = SKSpriteNode()
-        scoreNode.size = CGSize(width: 5, height: 536)
-        scoreNode.position = CGPoint(x: self.frame.maxX, y: self.frame.midY)
+        let scoreNode = SKSpriteNode(imageNamed: "Coin")
+        scoreNode.size = CGSize(width: 100, height: 100)
+        scoreNode.position = CGPoint(x: self.frame.maxX + 25, y: self.frame.midY)
         scoreNode.physicsBody = SKPhysicsBody(rectangleOf: scoreNode.size)
         createPhysicsBodyWithReactangle(scoreNode, physicsCategory.score, 0, physicsCategory.ghost)
         scoreNode.color = SKColor.white
-        scoreNode.isHidden = true
         
         wallPair = SKNode()
+        wallPair.name = "wallPair"
         //we are going to add out top and bottom wall into that wall pair and to edit the position of wallPair it self
         let topWall = SKSpriteNode(imageNamed: "Wall")
         let bottomWall = SKSpriteNode(imageNamed: "Wall")
         
-        topWall.position = CGPoint(x: self.frame.maxX, y: self.frame.midY + self.frame.maxY * 0.8)
-        bottomWall.position = CGPoint(x: self.frame.maxX, y: self.frame.midY - self.frame.maxY * 0.8)
-        
-        print("the topWall lowest y coordinate is \(topWall.frame.minY)")
-        print("the bottomWall highest y coordinate is \(bottomWall.frame.maxY)")
+        topWall.position = CGPoint(x: self.frame.maxX + 25, y: self.frame.midY + self.frame.maxY * 0.8)
+        bottomWall.position = CGPoint(x: self.frame.maxX + 25, y: self.frame.midY - self.frame.maxY * 0.8)
 
         topWall.setScale(1)
         bottomWall.setScale(1)
@@ -204,7 +245,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         self.addChild(wallPair)
     }
     
-    func createPhysicsBodyWithReactangle(_ object: SKSpriteNode, _ categoryBitMask: UInt32, _ collisionObject: UInt32, _ contactTestObject: UInt32, affectedByGravity: Bool = false, isDynamic: Bool = false){
+    func createPhysicsBodyWithReactangle(_ object: SKSpriteNode, _ categoryBitMask: UInt32, _ collisionObject: UInt32,
+                                         _ contactTestObject: UInt32, affectedByGravity: Bool = false, isDynamic: Bool = false){
         //add the physics to the object
         object.physicsBody = SKPhysicsBody(rectangleOf: object.size)
         //this tells whether we are colliding and what not
@@ -219,7 +261,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         object.physicsBody?.isDynamic = isDynamic
     }
     
-    func createPhysicsBodyWithCircle(_ object: SKSpriteNode, _ categoryBitMask: UInt32, _ collisionObject: UInt32, _ contactTestObject: UInt32, _ affectedByGravity: Bool = false, _ isDynamic: Bool = false){
+    func createPhysicsBodyWithCircle(_ object: SKSpriteNode, _ categoryBitMask: UInt32, _ collisionObject: UInt32,
+                                     _ contactTestObject: UInt32, _ affectedByGravity: Bool = false, _ isDynamic: Bool = false){
         object.physicsBody = SKPhysicsBody(circleOfRadius: object.frame.height / 2)
         object.physicsBody?.categoryBitMask = categoryBitMask
         object.physicsBody?.collisionBitMask = collisionObject
@@ -229,5 +272,19 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     
     override func update(_ currentTime: TimeInterval) {
+        if gameStarted == true {
+            if died == false {
+                enumerateChildNodes(withName: "background", using: ({
+                    (node, error) in
+                    let bg = node as! SKSpriteNode
+                    bg.position = CGPoint(x: bg.position.x - 2, y: 0)
+                    print ("the x is \(bg.position.x), y is \(bg.position.y) ")
+                    if bg.position.x <= -bg.size.width{
+                        bg.position = CGPoint(x: bg.position.x + bg.size.width * 2, y: 0)
+                        print ("****** \(bg.position.x)")
+                    }
+                }))
+            }
+        }
     }
 }

@@ -17,6 +17,7 @@
 		F6CF8A2F22FE734200C67BB7 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F6CF8A2D22FE734200C67BB7 /* LaunchScreen.storyboard */; };
 		F6CF8A3922FEB8A300C67BB7 /* RandomNoGeneration.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6CF8A3822FEB8A300C67BB7 /* RandomNoGeneration.swift */; };
 		F6CF8A3D22FECAF500C67BB7 /* Ghost.png in Resources */ = {isa = PBXBuildFile; fileRef = F6CF8A3C22FECAF500C67BB7 /* Ghost.png */; };
+		F6CF8A3F22FEEF6900C67BB7 /* 04B_19__.TTF in Resources */ = {isa = PBXBuildFile; fileRef = F6CF8A3E22FEEF6800C67BB7 /* 04B_19__.TTF */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -32,6 +33,7 @@
 		F6CF8A3022FE734200C67BB7 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		F6CF8A3822FEB8A300C67BB7 /* RandomNoGeneration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RandomNoGeneration.swift; sourceTree = "<group>"; };
 		F6CF8A3C22FECAF500C67BB7 /* Ghost.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Ghost.png; path = Assets.xcassets/Ghost.imageset/Ghost.png; sourceTree = "<group>"; };
+		F6CF8A3E22FEEF6800C67BB7 /* 04B_19__.TTF */ = {isa = PBXFileReference; lastKnownFileType = file; name = 04B_19__.TTF; path = Flappy_Bird_Text/04B_19__.TTF; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -64,6 +66,7 @@
 		F6CF8A1D22FE733900C67BB7 /* Flappy Ghost */ = {
 			isa = PBXGroup;
 			children = (
+				F6CF8A3E22FEEF6800C67BB7 /* 04B_19__.TTF */,
 				F6CF8A1E22FE733900C67BB7 /* AppDelegate.swift */,
 				F6CF8A2022FE733A00C67BB7 /* GameScene.sks */,
 				F6CF8A2222FE733A00C67BB7 /* Actions.sks */,
@@ -140,6 +143,7 @@
 				F6CF8A2A22FE733A00C67BB7 /* Main.storyboard in Resources */,
 				F6CF8A2122FE733A00C67BB7 /* GameScene.sks in Resources */,
 				F6CF8A2C22FE734200C67BB7 /* Assets.xcassets in Resources */,
+				F6CF8A3F22FEEF6900C67BB7 /* 04B_19__.TTF in Resources */,
 				F6CF8A2F22FE734200C67BB7 /* LaunchScreen.storyboard in Resources */,
 				F6CF8A2322FE733A00C67BB7 /* Actions.sks in Resources */,
 				F6CF8A3D22FECAF500C67BB7 /* Ghost.png in Resources */,
@@ -303,6 +307,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = S9TXM2HNYS;
 				INFOPLIST_FILE = "Flappy Ghost/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -320,6 +325,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = S9TXM2HNYS;
 				INFOPLIST_FILE = "Flappy Ghost/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
