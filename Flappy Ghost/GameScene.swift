@@ -14,18 +14,44 @@ struct physicsCategory {
     static let ghost: UInt32 = 0x1 << 1 //0001 changes to 0010 = 2
     static let ground: UInt32 = 0x1 << 2 //0001 changes to 0100 = 4
     static let wall: UInt32 = 0x1 << 3 //0001 changes to 1000 = 8
+    static let score: UInt32 = 0x1 << 4
 }
 
-class GameScene: SKScene {
+class GameScene: SKScene, SKPhysicsContactDelegate {
 
+    
     var ground = SKSpriteNode()
     var ghost = SKSpriteNode()
     var wallPair = SKNode()
     var wallPairWidth = CGFloat()
     var moveAndRemove = SKAction()
     var gameStarted = Bool()
+    var score = Int()
+    let scoreLbl = SKLabelNode()
+    var died = Bool()
+    var restartBtn = SKSpriteNode()
     
-    override func didMove(to view: SKView) {
+    func restartScene(){
+        self.removeAllChildren()
+        self.removeAllActions()
+        died = false
+        gameStarted = false
+        score = 0
+        createScene()
+    }
+    
+    func createScene(){
+        //this is to handle or delegate any physics contact that goes on
+        self.physicsWorld.contactDelegate = self
+        
+        scoreLbl.position = CGPoint(x: self.frame.midX, y: self.frame.midY + 500)
+        print ("the x coordinate is : \(scoreLbl.frame.midX), y is \(scoreLbl.frame.midY)")
+        scoreLbl.text = "\(score)"
+        scoreLbl.zPosition = 4
+        scoreLbl.fontColor = SKColor.white
+        scoreLbl.fontSize = 300
+        self.addChild(scoreLbl)
+        
         //add the ground
         ground = SKSpriteNode(imageNamed: "Ground")
         //size of our ground, which is 1080 by 100, if 0.5, then it's 540 by 50
@@ -45,10 +71,38 @@ class GameScene: SKScene {
         
         //add the physics to ghost
         //as the ghost has a round head, we don't want it hitting things that are not there, so use circle instead of rectangle
-        createPhysicsBodyWithCircle(ghost, physicsCategory.ghost, physicsCategory.ground | physicsCategory.wall, physicsCategory.ground | physicsCategory.wall, false, true)
+        createPhysicsBodyWithCircle(ghost, physicsCategory.ghost, physicsCategory.ground | physicsCategory.wall, physicsCategory.ground | physicsCategory.wall | physicsCategory.score, false, true)
         ghost.zPosition = 2
-
+        
         self.addChild(ghost)
+    }
+    
+    override func didMove(to view: SKView) {
+        createScene()
+    }
+    
+    func createBtn(){
+        restartBtn = SKSpriteNode(color: SKColor.blue, size: CGSize(width: 200, height: 100))
+        restartBtn.position = CGPoint(x: self.frame.midX, y: self.frame.midY)
+        restartBtn.zPosition = 5
+        self.addChild(restartBtn)
+    }
+    
+    //what stores inside this contact is what elements have collided with each other
+    func didBegin(_ contact: SKPhysicsContact) {
+        let firstBody = contact.bodyA
+        let secondBody = contact.bodyB
+        
+        if firstBody.categoryBitMask == physicsCategory.score && secondBody.categoryBitMask == physicsCategory.ghost || firstBody.categoryBitMask == physicsCategory.ghost && secondBody.categoryBitMask == physicsCategory.score {
+            score += 1
+            scoreLbl.text = "\(score)"
+            print ("the score is \(score)")
+        }
+        
+        if firstBody.categoryBitMask == physicsCategory.ghost && secondBody.categoryBitMask == physicsCategory.wall || firstBody.categoryBitMask == physicsCategory.wall && secondBody.categoryBitMask == physicsCategory.ghost {
+            died = true
+            createBtn()
+        }
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -66,32 +120,54 @@ class GameScene: SKScene {
             
             //delay is the time interval between your first wall and second, second and third...
             //this also implies the distance between each wall
-            let delay = SKAction.wait(forDuration: 2.5)
+            let delay = SKAction.wait(forDuration: 1.3)
             //we now apply the delay and the walls to a sequence, first spawn then delay
             let spawnDelay = SKAction.sequence([spawn, delay])
             let spawnDelayForever = SKAction.repeatForever(spawnDelay)
             //now here we run the action
             self.run(spawnDelayForever)
             
-            let distance = CGFloat(self.frame.width + wallPairWidth)
+            let distance = CGFloat(self.frame.width + wallPairWidth + 100)
             print ("the distance is \(distance)")
-            let movePipes = SKAction.moveBy(x: -distance, y: 0, duration: TimeInterval(0.006 * distance))
+            let movePipes = SKAction.moveBy(x: -distance, y: 0, duration: TimeInterval(0.003 * distance))
             let removePipes = SKAction.removeFromParent()
             self.moveAndRemove = SKAction.sequence([movePipes, removePipes])
             
             ghost.physicsBody?.velocity = CGVector(dx: 0, dy: 0)
             ghost.physicsBody?.applyImpulse(CGVector(dx: 0, dy: self.frame.maxY * 0.55))
         } else {
-            //when we press the screen, it's gonna to make the velocity to be 0, so it's not gonna moving anymore
-            ghost.physicsBody?.velocity = CGVector(dx: 0, dy: 0)
-            //then we applied the impulse so that it jumps up
-            ghost.physicsBody?.applyImpulse(CGVector(dx: 0, dy: self.frame.maxY * 0.55))
+            if died == true {
+            } else {
+                //when we press the screen, it's gonna to make the velocity to be 0, so it's not gonna moving anymore
+                ghost.physicsBody?.velocity = CGVector(dx: 0, dy: 0)
+                //then we applied the impulse so that it jumps up
+                ghost.physicsBody?.applyImpulse(CGVector(dx: 0, dy: self.frame.maxY * 0.55))
+            }
+        }
+        
+        //check if the restart button is tapped or not
+        for touch in touches{
+            let location = touch.location(in: self)
+            if died == true {
+                if restartBtn.contains(location){
+                    restartScene()
+                }
+            }
         }
     }
 
     func createWalls(){
-        wallPair = SKNode()
         
+        //this part shows score that you get at the end of the game
+        let scoreNode = SKSpriteNode()
+        scoreNode.size = CGSize(width: 5, height: 536)
+        scoreNode.position = CGPoint(x: self.frame.maxX, y: self.frame.midY)
+        scoreNode.physicsBody = SKPhysicsBody(rectangleOf: scoreNode.size)
+        createPhysicsBodyWithReactangle(scoreNode, physicsCategory.score, 0, physicsCategory.ghost)
+        scoreNode.color = SKColor.white
+        scoreNode.isHidden = true
+        
+        wallPair = SKNode()
         //we are going to add out top and bottom wall into that wall pair and to edit the position of wallPair it self
         let topWall = SKSpriteNode(imageNamed: "Wall")
         let bottomWall = SKSpriteNode(imageNamed: "Wall")
@@ -99,6 +175,9 @@ class GameScene: SKScene {
         topWall.position = CGPoint(x: self.frame.maxX, y: self.frame.midY + self.frame.maxY * 0.8)
         bottomWall.position = CGPoint(x: self.frame.maxX, y: self.frame.midY - self.frame.maxY * 0.8)
         
+        print("the topWall lowest y coordinate is \(topWall.frame.minY)")
+        print("the bottomWall highest y coordinate is \(bottomWall.frame.maxY)")
+
         topWall.setScale(1)
         bottomWall.setScale(1)
         
@@ -114,10 +193,11 @@ class GameScene: SKScene {
         //I would like to give order to different objects, especially how the walls and grounds order
         //so now walls are below everything
         wallPair.zPosition = 1
-        wallPairWidth = topWall.frame.width * 4
+        wallPairWidth = topWall.frame.width
         
         let randomPosition = CGFloat.random(min: -300, max: 300)
         wallPair.position.y = wallPair.position.y + randomPosition
+        wallPair.addChild(scoreNode)
         
         wallPair.run(moveAndRemove)
 

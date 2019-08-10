@@ -15,8 +15,8 @@
 		F6CF8A2A22FE733A00C67BB7 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F6CF8A2822FE733A00C67BB7 /* Main.storyboard */; };
 		F6CF8A2C22FE734200C67BB7 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F6CF8A2B22FE734200C67BB7 /* Assets.xcassets */; };
 		F6CF8A2F22FE734200C67BB7 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F6CF8A2D22FE734200C67BB7 /* LaunchScreen.storyboard */; };
-		F6CF8A3722FE746000C67BB7 /* Ghost.png in Resources */ = {isa = PBXBuildFile; fileRef = F6CF8A3622FE746000C67BB7 /* Ghost.png */; };
 		F6CF8A3922FEB8A300C67BB7 /* RandomNoGeneration.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6CF8A3822FEB8A300C67BB7 /* RandomNoGeneration.swift */; };
+		F6CF8A3D22FECAF500C67BB7 /* Ghost.png in Resources */ = {isa = PBXBuildFile; fileRef = F6CF8A3C22FECAF500C67BB7 /* Ghost.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -30,8 +30,8 @@
 		F6CF8A2B22FE734200C67BB7 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		F6CF8A2E22FE734200C67BB7 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		F6CF8A3022FE734200C67BB7 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		F6CF8A3622FE746000C67BB7 /* Ghost.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Ghost.png; path = Assets.xcassets/Ghost.imageset/Ghost.png; sourceTree = "<group>"; };
 		F6CF8A3822FEB8A300C67BB7 /* RandomNoGeneration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RandomNoGeneration.swift; sourceTree = "<group>"; };
+		F6CF8A3C22FECAF500C67BB7 /* Ghost.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Ghost.png; path = Assets.xcassets/Ghost.imageset/Ghost.png; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -74,7 +74,7 @@
 				F6CF8A2B22FE734200C67BB7 /* Assets.xcassets */,
 				F6CF8A2D22FE734200C67BB7 /* LaunchScreen.storyboard */,
 				F6CF8A3022FE734200C67BB7 /* Info.plist */,
-				F6CF8A3622FE746000C67BB7 /* Ghost.png */,
+				F6CF8A3C22FECAF500C67BB7 /* Ghost.png */,
 			);
 			path = "Flappy Ghost";
 			sourceTree = "<group>";
@@ -142,7 +142,7 @@
 				F6CF8A2C22FE734200C67BB7 /* Assets.xcassets in Resources */,
 				F6CF8A2F22FE734200C67BB7 /* LaunchScreen.storyboard in Resources */,
 				F6CF8A2322FE733A00C67BB7 /* Actions.sks in Resources */,
-				F6CF8A3722FE746000C67BB7 /* Ghost.png in Resources */,
+				F6CF8A3D22FECAF500C67BB7 /* Ghost.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
