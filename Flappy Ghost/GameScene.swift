@@ -7,21 +7,23 @@
 //
 
 import SpriteKit
-import GameplayKit
+//import GameplayKit
 
 struct physicsCategory {
-    static let ghost: UInt32 = 0x1 << 1
-    static let ground: UInt32 = 0x1 << 2
-    static let wall: UInt32 = 0x1 << 3
+    //0x1 is hexadeciaml presentation, it means 1, also means 0001 in decimal representation, << 1 means to shift the position to left by 1 unit
+    static let ghost: UInt32 = 0x1 << 1 //0001 changes to 0010 = 2
+    static let ground: UInt32 = 0x1 << 2 //0001 changes to 0100 = 4
+    static let wall: UInt32 = 0x1 << 3 //0001 changes to 1000 = 8
 }
 
 class GameScene: SKScene {
-    
-    private var label : SKLabelNode?
-    private var spinnyNode : SKShapeNode?
-    
+
     var ground = SKSpriteNode()
     var ghost = SKSpriteNode()
+    var wallPair = SKNode()
+    var wallPairWidth = CGFloat()
+    var moveAndRemove = SKAction()
+    var gameStarted = Bool()
     
     override func didMove(to view: SKView) {
         //add the ground
@@ -43,31 +45,59 @@ class GameScene: SKScene {
         
         //add the physics to ghost
         //as the ghost has a round head, we don't want it hitting things that are not there, so use circle instead of rectangle
-        createPhysicsBodyWithCircle(ghost, physicsCategory.ghost, physicsCategory.ground | physicsCategory.wall, physicsCategory.ground | physicsCategory.wall, true, true)
+        createPhysicsBodyWithCircle(ghost, physicsCategory.ghost, physicsCategory.ground | physicsCategory.wall, physicsCategory.ground | physicsCategory.wall, false, true)
         ghost.zPosition = 2
 
         self.addChild(ghost)
-        
-        createWalls()
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        
-        //when we press the screen, it's gonna to make the velocity to be 0, so it's not gonna moving anymore
-        ghost.physicsBody?.velocity = CGVector(dx: 0, dy: 0)
-        //then we applied the impulse so that it jumps up
-        ghost.physicsBody?.applyImpulse(CGVector(dx: 0, dy: 540))
+        if gameStarted == false {
+            //the run here is previously called runBlock : a block is a group of instructions we want to do when this is called. "() in" means essentially what we write inside the block here will be run when the spawn is called
+            gameStarted = true
+            ghost.physicsBody?.affectedByGravity = true
+            
+            let spawn = SKAction.run({
+                () in
+                
+                self.createWalls()
+              
+            })
+            
+            //delay is the time interval between your first wall and second, second and third...
+            //this also implies the distance between each wall
+            let delay = SKAction.wait(forDuration: 2.5)
+            //we now apply the delay and the walls to a sequence, first spawn then delay
+            let spawnDelay = SKAction.sequence([spawn, delay])
+            let spawnDelayForever = SKAction.repeatForever(spawnDelay)
+            //now here we run the action
+            self.run(spawnDelayForever)
+            
+            let distance = CGFloat(self.frame.width + wallPairWidth)
+            print ("the distance is \(distance)")
+            let movePipes = SKAction.moveBy(x: -distance, y: 0, duration: TimeInterval(0.006 * distance))
+            let removePipes = SKAction.removeFromParent()
+            self.moveAndRemove = SKAction.sequence([movePipes, removePipes])
+            
+            ghost.physicsBody?.velocity = CGVector(dx: 0, dy: 0)
+            ghost.physicsBody?.applyImpulse(CGVector(dx: 0, dy: self.frame.maxY * 0.55))
+        } else {
+            //when we press the screen, it's gonna to make the velocity to be 0, so it's not gonna moving anymore
+            ghost.physicsBody?.velocity = CGVector(dx: 0, dy: 0)
+            //then we applied the impulse so that it jumps up
+            ghost.physicsBody?.applyImpulse(CGVector(dx: 0, dy: self.frame.maxY * 0.55))
+        }
     }
 
     func createWalls(){
-        let wallPair = SKNode()
+        wallPair = SKNode()
         
         //we are going to add out top and bottom wall into that wall pair and to edit the position of wallPair it self
         let topWall = SKSpriteNode(imageNamed: "Wall")
         let bottomWall = SKSpriteNode(imageNamed: "Wall")
         
-        topWall.position = CGPoint(x: self.frame.midX, y: self.frame.midY + 640)
-        bottomWall.position = CGPoint(x: self.frame.midX, y: self.frame.midY - 640)
+        topWall.position = CGPoint(x: self.frame.maxX, y: self.frame.midY + self.frame.maxY * 0.8)
+        bottomWall.position = CGPoint(x: self.frame.maxX, y: self.frame.midY - self.frame.maxY * 0.8)
         
         topWall.setScale(1)
         bottomWall.setScale(1)
@@ -84,7 +114,13 @@ class GameScene: SKScene {
         //I would like to give order to different objects, especially how the walls and grounds order
         //so now walls are below everything
         wallPair.zPosition = 1
+        wallPairWidth = topWall.frame.width * 4
         
+        let randomPosition = CGFloat.random(min: -300, max: 300)
+        wallPair.position.y = wallPair.position.y + randomPosition
+        
+        wallPair.run(moveAndRemove)
+
         self.addChild(wallPair)
     }
     
