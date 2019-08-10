@@ -1,14 +1,14 @@
 # A small IOS game app in swift, which is similar to Flappy bird
 
 ### The initial icon looks like:
-<img src="https://github.com/kwanhiuhong/IOS_App_3_Flappy_Ghost/tree/master/Flappy%20Ghost/Assets.xcassets/ReadmeAssets/Icon.jpg">
+<img src="https://github.com/kwanhiuhong/IOS_App_3_Flappy_Ghost/blob/master/Flappy%20Ghost/Assets.xcassets/ReadmeAssets/Icon.jpg">
 
 ### The first page when you open the app
-<img src="https://github.com/kwanhiuhong/IOS_App_3_Flappy_Ghost/tree/master/Flappy%20Ghost/Assets.xcassets/ReadmeAssets/LaunchScreen.png">
+<img src="https://github.com/kwanhiuhong/IOS_App_3_Flappy_Ghost/blob/master/Flappy%20Ghost/Assets.xcassets/ReadmeAssets/LaunchScreen.png">
 
 ### Then you will see the following page. You can tap to start the flappy ghost game!
-<img src="https://github.com/kwanhiuhong/IOS_App_3_Flappy_Ghost/tree/master/Flappy%20Ghost/Assets.xcassets/ReadmeAssets/InitialScreen.png">
-<img src="https://github.com/kwanhiuhong/IOS_App_3_Flappy_Ghost/tree/master/Flappy%20Ghost/Assets.xcassets/ReadmeAssets/Playing.png">
+<img src="https://github.com/kwanhiuhong/IOS_App_3_Flappy_Ghost/blob/master/Flappy%20Ghost/Assets.xcassets/ReadmeAssets/InitialScreen.png">
+<img src="https://github.com/kwanhiuhong/IOS_App_3_Flappy_Ghost/blob/master/Flappy%20Ghost/Assets.xcassets/ReadmeAssets/Playing.png">
 
 ### After hitting the wall or ground, you will lose and you can choose to replay the game:
-<img src="https://github.com/kwanhiuhong/IOS_App_3_Flappy_Ghost/tree/master/Flappy%20Ghost/Assets.xcassets/ReadmeAssets/GameEnd.png">
+<img src="https://github.com/kwanhiuhong/IOS_App_3_Flappy_Ghost/blob/master/Flappy%20Ghost/Assets.xcassets/ReadmeAssets/GameEnd.png">
