@@ -14,6 +14,5 @@
 <img src="https://github.com/kwanhiuhong/IOS_App_3_Flappy_Ghost/blob/master/Flappy%20Ghost/Assets.xcassets/ReadmeAssets/GameEnd.png">
 
 ### Here is the demo
-<video width="400" height="280" controls>
-    <source src="https://github.com/kwanhiuhong/IOS_App_3_Flappy_Ghost/blob/master/Flappy%20Ghost/Assets.xcassets/ReadmeAssets/Demo.mp4" type="video/mp4">
-</video>
+<img src="https://github.com/kwanhiuhong/IOS_App_3_Flappy_Ghost/blob/master/Flappy%20Ghost/Assets.xcassets/ReadmeAssets/FirstPart.gif" height="100" width="100">
+<img src="https://github.com/kwanhiuhong/IOS_App_3_Flappy_Ghost/blob/master/Flappy%20Ghost/Assets.xcassets/ReadmeAssets/SecondPart.gif" height="100" width="100">
